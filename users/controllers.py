@@ -1,5 +1,6 @@
+from shutil import copyfileobj
 from typing import List,Union
-from fastapi import APIRouter,Depends,Response,status,HTTPException
+from fastapi import APIRouter,Depends,Response,status,HTTPException,Form,UploadFile,File
 from sqlalchemy.orm import Session
 from util import Hash,get_db
 from .schemas import UserResponse,User,UserDetailResponse
@@ -70,3 +71,23 @@ def delete_a_user(uid: int,response: Response,db: Session = Depends(get_db)):
     except Exception as err:
         print(err)
         response.status_code = status.HTTP_400_BAD_REQUEST
+
+
+@user_app.post("/profile")
+def user_profile(
+    name: str = Form(min_length=2),
+    age: int = Form(gt=0),
+    phone_number: str = Form(min_length=10,regex="^\d*$"),
+    profile_pic: UploadFile = File(...)
+):
+    filename = f"{profile_pic.filename}"
+    filepath = f"media/{filename}"
+    with open(filepath,"wb") as buffer:
+        copyfileobj(profile_pic.file,buffer)
+    
+    return {
+        "name": name,
+        "age": age,
+        "phone_number": phone_number,
+        "profile_pic": filename
+    }
