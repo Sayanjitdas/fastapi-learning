@@ -30,3 +30,5 @@ def create_article(request: Article,response: Response,db: Session = Depends(get
     db.commit()
     db.refresh(article_obj)
     return article_obj
+
+
