@@ -5,6 +5,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from passlib.context import CryptContext
 from jose import jwt,JWTError
+from fastapi.templating import Jinja2Templates
 
 ################### DB INITIALIZATION #################################
 engine = create_engine('sqlite:///fastapi-user.sqlite',connect_args = {
@@ -70,4 +71,8 @@ def verify_access_token(token: str):
         print(err)
         return None
     return username
+#######################################################################
+
+########### Template Engine Mounting ##################################
+template = Jinja2Templates(directory="templates")
 #######################################################################

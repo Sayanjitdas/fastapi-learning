@@ -1,9 +1,11 @@
 from fastapi import FastAPI
 from fastapi.responses import StreamingResponse,FileResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from users import user_app
 from articles import article_app
 from auth import auth_router
+from todo import todo_app
 from models import Base
 from util import engine
 
@@ -14,6 +16,7 @@ app = FastAPI()
 app.include_router(auth_router)
 app.include_router(user_app)
 app.include_router(article_app)
+app.include_router(todo_app)
 
 # static files mount
 app.mount("/media",StaticFiles(directory="media"))
