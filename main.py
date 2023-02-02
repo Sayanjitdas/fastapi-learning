@@ -1,5 +1,5 @@
-import time
-from fastapi import FastAPI,Request
+import time,os
+from fastapi import FastAPI,Request,BackgroundTasks
 from fastapi.responses import StreamingResponse,FileResponse
 from fastapi.staticfiles import StaticFiles
 from users import user_app
@@ -51,8 +51,15 @@ async def add_process_time_header(request: Request, call_next):
 #     with open(f"media/{filename}","rb") as b:
 #         yield b.read()
 
+def just_bt_check(filepath: str):
+    print("HERE>>")
+    file_size = os.path.getsize(filepath)
+    with open("size_log.txt","w") as f:
+        f.write(f"File: {filepath} | size: {round(file_size/1024,2)} KB")
 
 @app.get("/download/{name}",response_class=FileResponse)
-def download_file(name: str):
+def download_file(name: str,bt: BackgroundTasks):
+    bt.add_task(just_bt_check,filepath=f"media/{name}")
     return f"media/{name}"
+
 
